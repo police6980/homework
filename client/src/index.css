@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+:root {
+  --primary: #6C5DD3;
+  /* Soft Purple */
+  --secondary: #00B87C;
+  /* Bright Green for progress */
+  --accent: #FFCE73;
+  /* Yellow/Orange */
+  --text: #1B1B1B;
+  --text-light: #A0A0A0;
+  --bg: #F5F6FA;
+  --white: #FFFFFF;
+  --card-shadow: 0 8px 24px rgba(108, 93, 211, 0.05);
+  /* Soft purple shadow */
+  --radius: 20px;
+  --font-main: 'Noto Sans KR', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s ease-in-out;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  /* Slightly wider for new layout */
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  /* Subtle border */
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(108, 93, 211, 0.3);
+}
+
+
+
+.btn-primary:hover {
+  background-color: #5A4Cb5;
+  transform: translateY(-2px);
+}
+
+/* --- Dark Mode Overrides --- */
+body.dark-mode {
+  --bg: #121212;
+  --text: #E0E0E0;
+  --text-light: #AAAAAA;
+  --white: #1E1E1E;
+  /* Dark Card Background */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --primary: #8576EA;
+  /* Slightly lighter purple for dark mode */
+}
+
+body.dark-mode .date-display-btn {
+  background: #2C2C2C;
+  color: #E0E0E0;
+}
+
+body.dark-mode .date-display-btn:hover {
+  background: #3A3A3A;
+}
+
+body.dark-mode .icon-btn-round,
+body.dark-mode .nav-btn {
+  background: #2C2C2C;
+  border-color: #444;
+  color: #E0E0E0;
+}
+
+body.dark-mode .icon-btn-round:hover,
+body.dark-mode .nav-btn:hover {
+  background: #3A3A3A;
+  color: var(--primary);
+}
+
+/* --- Fast Tooltips (CSS Only) --- */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 110%;
+  /* Place below the element */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.15s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}

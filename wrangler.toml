@@ -1,0 +1,13 @@
+name = "homework-app-backend"
+main = "worker/index.js"
+compatibility_date = "2024-02-08"
+
+# D1 Database Binding
+[[d1_databases]]
+binding = "DB" # This name matches the one in worker code
+database_name = "homework-db"
+database_id = "e4a2d8b1-5c3f-4a1e-9b2d-8f7a6c5e0d3f" # Placeholder ID, user will update after `wrangler d1 creates`
+
+# Static Assets (React App)
+[site]
+bucket = "./client/dist"

@@ -1,0 +1,128 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #F5F6FA;
+}
+
+.login-card {
+    text-align: center;
+    width: 90%;
+    max-width: 420px;
+    padding: 48px 32px;
+    box-shadow: 0 10px 30px rgba(108, 93, 211, 0.1);
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    margin: 10px 0 5px;
+    color: var(--text);
+}
+
+.login-header p {
+    color: #888;
+    margin-bottom: 32px;
+}
+
+.login-icon {
+    font-size: 3rem;
+}
+
+.user-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.user-btn {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    font-size: 1.2rem;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    font-weight: 700;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.user-btn .emoji {
+    font-size: 1.5rem;
+    margin-right: 16px;
+    background: #F0F0F0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(108, 93, 211, 0.15);
+}
+
+.user-btn.daughter:hover {
+    border-color: #FFCE73;
+}
+
+.user-btn.mom:hover {
+    border-color: #6C5DD3;
+}
+
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.password-form label {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.password-form input {
+    padding: 14px;
+    border: 2px solid #E4E4E4;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    transition: border 0.2s;
+}
+
+.password-form input:focus {
+    border-color: #6C5DD3;
+}
+
+.error-msg {
+    color: #FF4D4F;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.form-actions button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+}
+
+.btn-back {
+    background: #F0F0F0;
+    color: #666;
+    font-weight: 600;
+}
+
+.btn-back:hover {
+    background: #E0E0E0;
+}

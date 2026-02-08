@@ -1,0 +1,58 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "11",
+      "category": "School",
+      "date": "2026-02-09",
+      "completed": 1,
+      "created_at": "2026-02-08T15:23:37.270Z",
+      "completed_at": "오전 12:24"
+    },
+    {
+      "id": 2,
+      "title": "ㄹㄹㄹ",
+      "category": "School",
+      "date": "2026-02-09",
+      "completed": 0,
+      "created_at": "2026-02-08T16:13:09.979Z"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "mom",
+      "password": "mom",
+      "role": "mom",
+      "stickers": 0,
+      "reward_goal": "치킨",
+      "sticker_target": 20
+    },
+    {
+      "id": 2,
+      "username": "daughter",
+      "password": "",
+      "role": "daughter",
+      "stickers": 2,
+      "reward_goal": "치킨",
+      "sticker_target": 15
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "content": "11",
+      "created_at": "2026-02-08T15:24:08.745Z"
+    },
+    {
+      "id": 2,
+      "content": "11",
+      "created_at": "2026-02-08T15:24:11.807Z"
+    }
+  ],
+  "nextIds": {
+    "tasks": 3,
+    "users": 3,
+    "messages": 3
+  }
+}

@@ -1,0 +1,266 @@
+.task-list-container {
+    width: 100%;
+}
+
+/* Add Task Bar */
+.add-task-bar {
+    background: var(--white);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 24px;
+}
+
+.horizontal-form {
+    display: flex;
+    gap: 12px;
+}
+
+.task-input {
+    flex: 2;
+    padding: 12px 16px;
+    border: 2px solid #F0F0F0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+
+.task-input:focus {
+    border-color: var(--primary);
+}
+
+.cat-select {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #F0F0F0;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .horizontal-form {
+        flex-direction: column;
+    }
+}
+
+/* Filters */
+.filter-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.tab:hover {
+    background: rgba(108, 93, 211, 0.05);
+    color: var(--primary);
+}
+
+.tab.active {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(108, 93, 211, 0.2);
+}
+
+/* Tasks Grid */
+.tasks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #aaa;
+    font-size: 1.1rem;
+}
+
+.task-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    border-color: rgba(108, 93, 211, 0.1);
+}
+
+.task-card.completed {
+    background: #FAFAFA;
+}
+
+.task-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    /* Critical for flex child truncation */
+}
+
+.custom-checkbox {
+    min-width: 24px;
+    height: 24px;
+    border: 2px solid #E4E4E4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    transition: all 0.2s;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.task-card:hover .custom-checkbox {
+    border-color: var(--primary);
+}
+
+.custom-checkbox.checked {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    /* Critical for text overflow */
+}
+
+.task-title {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: color 0.2s;
+    word-break: break-word;
+    /* Ensure long words wrap */
+    overflow-wrap: break-word;
+}
+
+.task-card.completed .task-title {
+    text-decoration: line-through;
+    color: #bbb;
+}
+
+.task-cat-badge {
+    font-size: 0.8rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    z-index: 2;
+    flex-shrink: 0;
+    /* Prevent shrinking */
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    color: #fa5252;
+}
+
+.task-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.task-time-badge {
+    font-size: 0.8rem;
+    color: #2b8a3e;
+    background: #ebfbee;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .tasks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .horizontal-form {
+        flex-direction: column;
+    }
+
+    .add-task-bar {
+        padding: 12px;
+    }
+
+    .task-input {
+        width: 100%;
+    }
+
+    .cat-select {
+        width: 100%;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+.refresh-btn {
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #495057;
+    transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+    background: #dee2e6;
+    transform: rotate(180deg);
+    /* Simple spin effect on hover */
+}
+
+/* Disabled Checkbox Visuals for Mom */
+.task-left.read-only .custom-checkbox {
+    border-color: #adb5bd;
+    background-color: #f1f3f5;
+    cursor: default;
+}
+
+.task-left.read-only:hover {
+    background-color: transparent;
+    /* No hover effect for read-only */
+}
