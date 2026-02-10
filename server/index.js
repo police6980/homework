@@ -98,7 +98,15 @@ app.get('/api/stickers/:username', (req, res) => {
 
 app.post('/api/stickers/:username', (req, res) => {
     const { delta } = req.body;
-    db.updateUserStickers(req.params.username, delta);
+    console.log(`[API] Updating stickers for ${req.params.username}, delta: ${delta}`);
+
+    // Ensure delta is a number
+    const deltaNum = parseInt(delta, 10);
+    if (isNaN(deltaNum)) {
+        return res.status(400).json({ error: 'Invalid delta value' });
+    }
+
+    db.updateUserStickers(req.params.username, deltaNum);
     res.json({ message: 'success' });
 });
 

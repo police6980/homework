@@ -146,6 +146,55 @@
   flex: 1;
 }
 
+/* Desktop Only Sidebar */
+.desktop-only {
+  display: none;
+  /* Hidden by default on mobile */
+}
+
+/* Mobile Tabs */
+.mobile-tab-nav {
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  padding: 6px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.mobile-tab.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(108, 93, 211, 0.3);
+}
+
+/* Mobile Content Switching */
+.mobile-view-sidebar {
+  display: none;
+}
+
+.mobile-content-wrapper.show-stickers .mobile-view-tasks {
+  display: none;
+}
+
+.mobile-content-wrapper.show-stickers .mobile-view-sidebar {
+  display: block;
+}
+
+
 @media (min-width: 900px) {
   .main-content {
     grid-template-columns: 3fr 1fr;
@@ -155,6 +204,26 @@
   .sidebar-area {
     position: sticky;
     top: 100px;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+
+  /* Hide Mobile Tabs and Wrapper logic on Desktop */
+  .mobile-tab-nav {
+    display: none;
+  }
+
+  /* On Desktop, we show TaskList in content-area always, and Sidebar in aside */
+  /* We need to hide the mobile-view-sidebar inside content-area on desktop */
+  .mobile-view-sidebar {
+    display: none !important;
+  }
+
+  /* Ensure TaskList is always visible in content-area on desktop */
+  .mobile-view-tasks {
+    display: block !important;
   }
 }
 

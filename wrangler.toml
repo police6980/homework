@@ -6,7 +6,7 @@ compatibility_date = "2024-02-08"
 [[d1_databases]]
 binding = "DB" # This name matches the one in worker code
 database_name = "homework-db"
-database_id = "e4a2d8b1-5c3f-4a1e-9b2d-8f7a6c5e0d3f" # Placeholder ID, user will update after `wrangler d1 creates`
+database_id = "996ad52e-e7fa-497c-9179-de39972ca99b"
 
 # Static Assets (React App)
 [site]

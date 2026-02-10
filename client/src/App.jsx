@@ -74,6 +74,9 @@ function App() {
     </button>
   ));
 
+  // Mobile Tab State
+  const [mobileTab, setMobileTab] = useState('tasks'); // 'tasks' | 'stickers'
+
   return (
     <div className="app-layout">
       <header className="app-header">
@@ -136,16 +139,45 @@ function App() {
             <button onClick={() => changeDate(1)} className="nav-btn"><FaChevronRight /></button>
           </div>
 
-          <TaskList
-            user={user}
-            date={formattedDate}
-            onUpdate={setTasks}
-            refreshTrigger={refreshTrigger}
-            onRefresh={handleRefresh}
-          />
+          {/* Mobile Tabs (Only visible on mobile) */}
+          <div className="mobile-tab-nav">
+            <button
+              className={`mobile-tab ${mobileTab === 'tasks' ? 'active' : ''}`}
+              onClick={() => setMobileTab('tasks')}
+            >
+              📝 할 일 목록
+            </button>
+            <button
+              className={`mobile-tab ${mobileTab === 'stickers' ? 'active' : ''}`}
+              onClick={() => setMobileTab('stickers')}
+            >
+              ⭐ 스티커판
+            </button>
+          </div>
+
+          {/* Content Switcher */}
+          <div className={`mobile-content-wrapper ${mobileTab === 'stickers' ? 'show-stickers' : ''}`}>
+            <div className="mobile-view-tasks">
+              <TaskList
+                user={user}
+                date={formattedDate}
+                onUpdate={setTasks}
+                refreshTrigger={refreshTrigger}
+                onRefresh={handleRefresh}
+              />
+            </div>
+            <div className="mobile-view-sidebar">
+              <Sidebar
+                currentUser={user}
+                onSelectDate={(date) => handleDateSelect({ dateString: date })}
+                refreshTrigger={refreshTrigger}
+              />
+            </div>
+          </div>
         </div>
 
-        <aside className="sidebar-area">
+        {/* Desktop Sidebar (Hidden on Mobile via CSS) */}
+        <aside className="sidebar-area desktop-only">
           <Sidebar
             currentUser={user}
             onSelectDate={(date) => handleDateSelect({ dateString: date })}

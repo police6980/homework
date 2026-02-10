@@ -1,11 +1,29 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serveStatic } from 'hono/cloudflare-workers';
+import manifest from '__STATIC_CONTENT_MANIFEST';
 
 const app = new Hono();
 
 // Middleware
+app.use('*', async (c, next) => {
+    console.log(`[${c.req.method}] ${c.req.path}`);
+    await next();
+});
 app.use('/*', cors());
+
+// ... (API Routes remain same) ...
+
+// --- Static Assets (React App) ---
+// 1. Try to serve matching static file
+app.use('/*', serveStatic({ root: './', manifest }));
+
+// 2. Fallback for SPA: serve index.html for non-API routes that missed static files
+app.get('*', serveStatic({ path: 'index.html', root: './', manifest })); // Try path approach
+// Note: If path isn't supported, we rely on rewrite in step 1 or explicit handler.
+// Let's try explicit rewrite in the first handler instead if unsure.
+// BETTER APPROACH below:
+
 
 // --- API Routes (D1 Database) ---
 
@@ -160,11 +178,26 @@ app.delete('/api/memos/:id', async (c) => {
 
 
 // --- Static Assets (React App) ---
-// Serve static files from the build output (handled by 'site' bucket in wrangler.toml)
-// app.get('/*', serveStatic({ root: './' })); // Logic handled by Workers Sites usually, but Hono has adapter check specific docs if needed for 'site' bucket
-// Actually, with `[site]` in wrangler.toml, the worker script only handles API. Static assets are served automatically if not matched by worker?
-// Cloudflare Workers Sites: Request goes to Worker. Worker logic decides.
-// Recommended pattern: serveStatic
-app.use('/*', serveStatic({ root: './' }));
+app.use('/*', serveStatic({
+    root: './',
+    manifest,
+    rewriteRequestPath: (path) => {
+        if (path === '/') return '/index.html'; // Explicitly map root to index.html
+        return path;
+    }
+}));
+
+// Fallback: If above didn't find file, force index.html (for SPA routing like /timer)
+app.notFound(async (c) => {
+    if (c.req.path.startsWith('/api/')) {
+        return c.json({ message: 'Not Found' }, 404);
+    }
+    // Reuse serveStatic logic for index.html? 
+    // Hono serveStatic doesn't easily expose "serve this specific file" without a request.
+    // Instead, we can assume the frontend router handles everything else if we load index.html.
+    // Let's try just the rewrite first, usually robust enough for / and /index.html.
+    return c.text('404 Not Found (Client Route)', 404);
+});
+
 
 export default app;

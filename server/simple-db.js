@@ -108,8 +108,14 @@ class SimpleDB {
 
     updateUserStickers(username, delta) {
         const user = this.getUser(username);
-        if (!user) return;
-        user.stickers = Math.max(0, (user.stickers || 0) + delta);
+        if (!user) {
+            console.error(`[DB] User not found: ${username}`);
+            return;
+        }
+        const current = parseInt(user.stickers) || 0;
+        const change = parseInt(delta) || 0;
+        user.stickers = Math.max(0, current + change);
+        console.log(`[DB] Updated stickers for ${username}: ${user.stickers}`);
         this.save();
     }
 
