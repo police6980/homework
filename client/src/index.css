@@ -65,6 +65,20 @@ textarea {
   padding: 24px;
 }
 
+@media (max-width: 600px) {
+  .container {
+    padding: 12px;
+    /* Reduce padding on mobile to give more space to content */
+  }
+
+  /* Prevent iOS Zoom on focus */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 .card {
   background: var(--white);
   border-radius: var(--radius);

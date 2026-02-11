@@ -218,6 +218,10 @@
 
     .add-task-bar {
         padding: 12px;
+        margin-left: -4px;
+        margin-right: -4px;
+        /* Slight negative margin to pull it wider */
+        width: auto;
     }
 
     .task-input {
@@ -245,9 +249,9 @@
     /* Better Task Card on Mobile */
     .task-card {
         padding: 16px;
-        flex-direction: row;
-        /* Keep row but allow wrapping if needed */
-        flex-wrap: wrap;
+        flex-direction: column;
+        /* Stack vertically on mobile */
+        align-items: stretch;
     }
 
     .task-left {

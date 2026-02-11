@@ -168,6 +168,14 @@ body {
   padding-top: 5px;
   /* Reduced from 10px */
   flex: 1;
+  overflow-y: auto;
+  /* ENABLE SCROLLING */
+  min-height: 0;
+  /* CRITICAL for flex child scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Smooth scroll on iOS */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  /* Extra space + Safe Area */
 }
 
 /* Desktop Only Sidebar */
