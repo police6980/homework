@@ -126,7 +126,14 @@ app.get('/api/stickers/:username', async (c) => {
 
 app.post('/api/stickers/:username', async (c) => {
     const username = c.req.param('username');
-    const { delta } = await c.req.json();
+    const body = await c.req.json();
+    const { delta } = body;
+
+    // Validation
+    const deltaNum = parseInt(delta, 10);
+    if (isNaN(deltaNum)) {
+        return c.json({ error: 'Invalid delta value' }, 400);
+    }
 
     // Ensure user exists (Fail-safe)
     const user = await c.env.DB.prepare('SELECT id FROM users WHERE username = ?').bind(username).first();
@@ -136,7 +143,7 @@ app.post('/api/stickers/:username', async (c) => {
         ).bind(username).run();
     }
 
-    await c.env.DB.prepare('UPDATE users SET stickers = MAX(0, stickers + ?) WHERE username = ?').bind(delta, username).run();
+    await c.env.DB.prepare('UPDATE users SET stickers = MAX(0, stickers + ?) WHERE username = ?').bind(deltaNum, username).run();
     return c.json({ message: 'success' });
 });
 

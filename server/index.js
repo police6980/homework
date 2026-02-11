@@ -12,7 +12,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Serve Static Files from React App
+// Serve Static Files from React App
 app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, '../client/public'))); // Serve public assets (like photos)
 
 // API Endpoints
 
