@@ -1,0 +1,13 @@
+name = "homework-app-backend"
+main = "worker/index.js"
+compatibility_date = "2024-02-08"
+
+# D1 Database Binding
+[[d1_databases]]
+binding = "DB" # This name matches the one in worker code
+database_name = "homework-db"
+database_id = "996ad52e-e7fa-497c-9179-de39972ca99b"
+
+# Static Assets (React App)
+[site]
+bucket = "./client/dist"

@@ -16,15 +16,6 @@
       "date": "2026-02-09",
       "completed": 0,
       "created_at": "2026-02-08T16:13:09.979Z"
-    },
-    {
-      "id": 3,
-      "title": "11",
-      "category": "Math",
-      "date": "2026-02-11",
-      "completed": 1,
-      "created_at": "2026-02-11T01:09:19.738Z",
-      "completed_at": "오전 10:19"
     }
   ],
   "users": [
@@ -42,7 +33,7 @@
       "username": "daughter",
       "password": "",
       "role": "daughter",
-      "stickers": 5,
+      "stickers": 1,
       "reward_goal": "Pizza",
       "sticker_target": 10
     }
