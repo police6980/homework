@@ -127,6 +127,15 @@ app.get('/api/stickers/:username', async (c) => {
 app.post('/api/stickers/:username', async (c) => {
     const username = c.req.param('username');
     const { delta } = await c.req.json();
+
+    // Ensure user exists (Fail-safe)
+    const user = await c.env.DB.prepare('SELECT id FROM users WHERE username = ?').bind(username).first();
+    if (!user) {
+        await c.env.DB.prepare(
+            "INSERT INTO users (username, password, role, stickers, reward_goal, sticker_target) VALUES (?, '', 'daughter', 0, '치킨', 20)"
+        ).bind(username).run();
+    }
+
     await c.env.DB.prepare('UPDATE users SET stickers = MAX(0, stickers + ?) WHERE username = ?').bind(delta, username).run();
     return c.json({ message: 'success' });
 });

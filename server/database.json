@@ -33,9 +33,9 @@
       "username": "daughter",
       "password": "",
       "role": "daughter",
-      "stickers": 2,
-      "reward_goal": "치킨",
-      "sticker_target": 15
+      "stickers": 0,
+      "reward_goal": "Pizza",
+      "sticker_target": 10
     }
   ],
   "messages": [

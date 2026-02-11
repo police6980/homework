@@ -71,28 +71,283 @@
     transform: scale(1.05);
 }
 
-/* Mobile Responsiveness for Sticker Board Admin */
-@media (max-width: 600px) {
-    .widget-card .goal-section {
-        font-size: 1rem;
-    }
+/* Sticker Board */
+.sticker-board {
+    background: linear-gradient(135deg, #FFF5F7 0%, #FFF0F6 100%);
+    border: 2px solid #FFD6E7;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
 
-    .sticker-stats {
-        flex-direction: column;
-        gap: 10px;
-    }
+.sticker-board.completed {
+    background: linear-gradient(135deg, #FFF3BF 0%, #FFEC99 100%);
+    border-color: #FCC419;
+    box-shadow: 0 0 20px rgba(255, 212, 59, 0.4);
+}
 
-    /* Make inputs smaller on mobile */
-    .widget-card input[type="text"],
-    .widget-card input[type="number"] {
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-top: 4px;
-    }
+.sticker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
 
-    .widget-card label {
-        display: block;
-        margin-bottom: 2px;
-        font-size: 0.9rem;
+.title-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.title-area .icon {
+    font-size: 1.5rem;
+}
+
+.settings-btn {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #adb5bd;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+.settings-btn:hover {
+    background: rgba(0,0,0,0.05);
+    color: #495057;
+}
+
+/* Edit Panel */
+.edit-panel {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.edit-panel h4 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    color: #495057;
+}
+
+.input-group {
+    margin-bottom: 10px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #868e96;
+    margin-bottom: 4px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-save, .btn-reset {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-save {
+    background: #4dabf7;
+    color: white;
+}
+
+.btn-reset {
+    background: #ff8787;
+    color: white;
+}
+
+/* Goal Display */
+.goal-display {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.goal-display .label {
+    display: block;
+    font-size: 0.9rem;
+    color: #868e96;
+    margin-bottom: 4px;
+}
+
+.goal-display .target {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #D6336C;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.progress-text {
+    font-size: 1.1rem;
+    color: #495057;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.6);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+/* Sticker Grid */
+.sticker-grid-container {
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.sticker-grid {
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+}
+
+.sticker-slot {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px dashed #FFD6E7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.sticker-slot.filled {
+    border: none;
+    background: #FF6B6B;
+    box-shadow: 0 4px 6px rgba(255, 107, 107, 0.2);
+    transform: scale(1.05);
+}
+
+.sticker-content {
+    font-size: 1.2rem;
+}
+
+.sticker-number {
+    font-size: 0.8rem;
+    color: #FFDEEB;
+    font-weight: 700;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.bounce-in {
+    animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Control Panel */
+.control-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: auto;
+}
+
+.btn-control {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-control:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.btn-control:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-control.minus {
+    background: white;
+    border: 2px solid #dee2e6;
+    color: #868e96;
+}
+
+.btn-control.plus {
+    background: #FF6B6B;
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+}
+
+.control-label {
+    font-size: 0.9rem;
+    color: #868e96;
+    font-weight: 600;
+}
+
+/* Completion Banner */
+.completion-banner {
+    margin-top: 15px;
+    padding: 15px;
+    background: #FFF3BF;
+    border-radius: 12px;
+    color: #E67700;
+    animation: float 2s infinite ease-in-out;
+}
+
+.completion-banner h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.completion-banner p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {  
+    .sticker-grid {
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 6px;
+    }
+    
+    .sticker-slot {
+        width: 100%;
     }
 }

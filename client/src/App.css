@@ -1,13 +1,29 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: none;
+  /* Prevent pull-to-refresh on mobile */
+}
+
 .app-layout {
-  min-height: 100vh;
+  height: 100dvh;
+  /* Dynamic Viewport Height for mobile browsers */
   background-color: var(--bg);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  /* Prevent body scroll, handle inside main-content */
 }
 
 .app-header {
-  background: var(--white);
-  padding: 16px 0;
+  background: #FFF0F6;
+  /* VISUAL VERIFY: Pink Header */
+  padding: 8px 0;
+  /* Compact padding */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   position: sticky;
   top: 0;
@@ -18,7 +34,8 @@
 .header-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
+  /* Reduced from 16px */
   padding-bottom: 0;
 }
 
@@ -81,6 +98,11 @@
   }
 }
 
+/* Ensure header controls don't wrap weirdly */
+.header-controls {
+  flex-shrink: 0;
+}
+
 .date-display-btn {
   background: #F0F0F0;
   padding: 8px 16px;
@@ -141,8 +163,10 @@
 .main-content {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
-  padding-top: 30px;
+  gap: 8px;
+  /* Reduced from 12px */
+  padding-top: 5px;
+  /* Reduced from 10px */
   flex: 1;
 }
 

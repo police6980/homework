@@ -1,25 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import confetti from 'canvas-confetti';
 import './Widgets.css';
 
 const StickerBoard = ({ user, refreshTrigger }) => {
-    const [stickers, setStickers] = useState(0);
-    const [goal, setGoal] = useState('치킨');
-    const [target, setTarget] = useState(20);
+    const [stats, setStats] = useState({ stickers: 0, reward_goal: '치킨', sticker_target: 20 });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // Admin Mode States
+    // Edit Mode State
     const [isEditing, setIsEditing] = useState(false);
-    const [tempGoal, setTempGoal] = useState('');
-    const [tempTarget, setTempTarget] = useState(20);
+    const [editGoal, setEditGoal] = useState('');
+    const [editTarget, setEditTarget] = useState(20);
+
+    // Optimistic UI State
+    const [optimisticStickers, setOptimisticStickers] = useState(null);
+
+    const isMom = user.role === 'mom';
 
     const fetchStickers = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const res = await fetch(`/api/stickers/daughter`);
+            if (!res.ok) throw new Error('Failed to fetch data');
             const data = await res.json();
-            setStickers(data.stickers);
-            setGoal(data.reward_goal || '치킨');
-            setTarget(data.sticker_target || 20);
+            setStats(data);
+            setEditGoal(data.reward_goal);
+            setEditTarget(data.sticker_target);
+            setOptimisticStickers(null); // Sync complete, clear optimistic state
         } catch (err) {
             console.error(err);
+            setError("데이터를 불러오지 못했습니다.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -27,172 +40,222 @@ const StickerBoard = ({ user, refreshTrigger }) => {
         fetchStickers();
     }, [refreshTrigger]);
 
-    const handleSaveSettings = async () => {
-        try {
-            await fetch(`/api/stickers/daughter/goal`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ goal: tempGoal, target: parseInt(tempTarget) })
-            });
-            setGoal(tempGoal);
-            setTarget(parseInt(tempTarget));
-            setIsEditing(false);
-        } catch (err) {
-            console.error(err);
+    // Handle confetti when goal is reached
+    useEffect(() => {
+        const currentStickers = optimisticStickers !== null ? optimisticStickers : stats.stickers;
+        if (currentStickers >= stats.sticker_target && stats.sticker_target > 0) {
+            triggerConfetti();
         }
+    }, [stats.stickers, optimisticStickers, stats.sticker_target]);
+
+    const triggerConfetti = () => {
+        const duration = 3000;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#FF6B6B', '#FFD43B', '#69DB7C']
+            });
+            confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#FF6B6B', '#FFD43B', '#69DB7C']
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
     };
 
-    const handleManualChange = async (delta) => {
+    const handleUpdateStickers = async (delta) => {
+        if (loading) return;
+
+        // Optimistic Update
+        const currentStickers = optimisticStickers !== null ? optimisticStickers : stats.stickers;
+        const newStickers = Math.max(0, currentStickers + delta);
+        setOptimisticStickers(newStickers);
+
         try {
-            await fetch(`/api/stickers/daughter`, {
+            const res = await fetch(`/api/stickers/daughter`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ delta })
             });
-            fetchStickers(); // Refresh
+
+            if (!res.ok) throw new Error('Update failed');
+
+            // Background refetch to ensure sync
+            fetchStickers();
         } catch (err) {
             console.error(err);
+            alert("스티커 업데이트 실패! 다시 시도해주세요.");
+            setOptimisticStickers(null); // Revert on failure
+            fetchStickers();
+        }
+    };
+
+    const handleSaveConfig = async () => {
+        if (!editGoal.trim() || editTarget < 1) {
+            alert("목표와 개수를 올바르게 입력해주세요.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/stickers/daughter/goal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goal: editGoal, target: parseInt(editTarget) })
+            });
+
+            if (res.ok) {
+                setIsEditing(false);
+                fetchStickers();
+                alert("설정이 저장되었습니다!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("설정 저장 실패");
         }
     };
 
     const handleReset = async () => {
-        if (!window.confirm("정말 스티커를 0개로 초기화하시겠습니까?\n(보상을 주셨나요?)")) return;
+        if (!window.confirm("정말 스티커판을 초기화하시겠습니까? (이 작업은 되돌릴 수 없습니다)")) return;
+
         try {
-            await fetch(`/api/stickers/daughter/reset`, {
-                method: 'POST'
-            });
-            fetchStickers();
+            const res = await fetch(`/api/stickers/daughter/reset`, { method: 'POST' });
+            if (res.ok) {
+                fetchStickers();
+                alert("스티커판이 초기화되었습니다.");
+            }
         } catch (err) {
             console.error(err);
+            alert("초기화 실패");
         }
     };
 
-    // Calculate progress
-    const progress = Math.min(stickers, target);
-    const isCompleted = stickers >= target;
+    // Render Logic
+    const currentStickers = optimisticStickers !== null ? optimisticStickers : stats.stickers;
+    const { reward_goal, sticker_target } = stats;
+    const progress = Math.min(currentStickers, sticker_target);
+    const isCompleted = currentStickers >= sticker_target;
+
+    // Grid Calculation
+    // We want a nice grid. If target is small (<=10), maybe 5 cols. If larger, maybe 5-8 cols.
+    // Let's stick to a responsive grid using CSS Grid, but we need to know how many items to render.
+    const gridItems = Array.from({ length: sticker_target });
+
+    if (error) {
+        return <div className="widget-card sticker-error">⚠️ {error} <button onClick={fetchStickers}>재시도</button></div>;
+    }
 
     return (
-        <div className="widget-card sticker-widget" style={{ background: 'linear-gradient(135deg, #fff9db 0%, #fff3bf 100%)', border: '2px solid #ffe066' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3>🌟 칭찬 스티커판</h3>
-                {user.role === 'mom' && (
-                    <button
-                        onClick={() => {
-                            if (!isEditing) {
-                                setTempGoal(goal);
-                                setTempTarget(target);
-                            }
-                            setIsEditing(!isEditing);
-                        }}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.8rem', color: '#f08c00' }}
-                    >
-                        {isEditing ? '취소' : '⚙️설정'}
+        <div className={`widget-card sticker-board ${isCompleted ? 'completed' : ''}`}>
+            {/* Header Area */}
+            <div className="sticker-header">
+                <div className="title-area">
+                    <span className="icon">🍓</span>
+                    <h3>칭찬 스티커판</h3>
+                </div>
+                {isMom && (
+                    <button className="settings-btn" onClick={() => setIsEditing(!isEditing)}>
+                        {isEditing ? '닫기' : '⚙️ 설정'}
                     </button>
                 )}
             </div>
 
-            {/* Admin Controls (Mom Only) */}
-            {user.role === 'mom' && isEditing && (
-                <div style={{ background: 'rgba(255,255,255,0.8)', padding: '10px', borderRadius: '8px', marginBottom: '10px', border: '1px solid #f08c00' }}>
-                    <div style={{ marginBottom: '5px' }}>
-                        <label>목표: </label>
+            {/* Edit Mode Panel */}
+            {isEditing && (
+                <div className="edit-panel">
+                    <h4>스티커판 설정</h4>
+                    <div className="input-group">
+                        <label>목표 보상:</label>
                         <input
-                            type="text" value={tempGoal} onChange={(e) => setTempGoal(e.target.value)}
-                            style={{ width: '100px', marginLeft: '5px', padding: '2px' }}
+                            type="text"
+                            value={editGoal}
+                            onChange={(e) => setEditGoal(e.target.value)}
+                            placeholder="예: 치킨, 장난감"
                         />
                     </div>
-                    <div style={{ marginBottom: '5px' }}>
-                        <label>개수: </label>
+                    <div className="input-group">
+                        <label>목표 개수:</label>
                         <input
-                            type="number" value={tempTarget} onChange={(e) => setTempTarget(e.target.value)}
-                            style={{ width: '60px', marginLeft: '5px', padding: '2px' }}
+                            type="number"
+                            value={editTarget}
+                            onChange={(e) => setEditTarget(e.target.value)}
+                            min="1"
+                            max="100"
                         />
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                        <button onClick={handleReset} style={{ background: '#ff6b6b', color: 'white', border: 'none', borderRadius: '4px', padding: '3px 8px', fontSize: '0.8rem' }}>
-                            🗑️ 초기화
-                        </button>
-                        <button onClick={handleSaveSettings} style={{ background: '#f08c00', color: 'white', border: 'none', borderRadius: '4px', padding: '3px 12px' }}>
-                            저장
-                        </button>
+                    <div className="button-group">
+                        <button className="btn-reset" onClick={handleReset}>🗑️ 초기화</button>
+                        <button className="btn-save" onClick={handleSaveConfig}>💾 저장</button>
                     </div>
                 </div>
             )}
 
             {/* Goal Display */}
-            {!isEditing && (
-                <div className="goal-section" style={{ textAlign: 'center', margin: '5px 0', fontSize: '1.1rem', color: '#e67700' }}>
-                    목표: <strong>{goal}</strong>
+            <div className="goal-display">
+                <span className="label">이번 목표</span>
+                <span className="target">{reward_goal}</span>
+                <div className="progress-text">
+                    <span className="current">{currentStickers}</span>
+                    <span className="divider">/</span>
+                    <span className="total">{sticker_target}</span>
+                </div>
+            </div>
+
+            {/* Sticker Grid */}
+            <div className="sticker-grid-container">
+                <div className="sticker-grid" style={{
+                    gridTemplateColumns: `repeat(auto-fit, minmax(40px, 1fr))`
+                }}>
+                    {gridItems.map((_, i) => (
+                        <div key={i} className={`sticker-slot ${i < progress ? 'filled' : 'empty'}`}>
+                            {i < progress ? (
+                                <div className="sticker-content bounce-in">🍓</div>
+                            ) : (
+                                <div className="sticker-number">{i + 1}</div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Action Buttons (Mom Only) */}
+            {isMom && (
+                <div className="control-panel">
+                    <button
+                        className="btn-control minus"
+                        onClick={() => handleUpdateStickers(-1)}
+                        disabled={currentStickers <= 0}
+                    >
+                        -1
+                    </button>
+                    <span className="control-label">스티커 주기</span>
+                    <button
+                        className="btn-control plus"
+                        onClick={() => handleUpdateStickers(1)}
+                        disabled={isCompleted}
+                    >
+                        +1
+                    </button>
                 </div>
             )}
 
-            {/* Grid */}
-            <div className="sticker-grid" style={{
-                gridTemplateColumns: `repeat(${target > 25 ? 10 : 5}, 1fr)`
-            }}>
-                {Array.from({ length: target }).map((_, i) => (
-                    <div key={i} className={`sticker-slot ${i < progress ? 'filled' : ''}`}>
-                        {i < progress ? '⭐' : (i + 1)}
-                    </div>
-                ))}
-            </div>
-
-            {/* Stats & Manual Control */}
-            <div className="sticker-stats">
-                {user.role === 'mom' ? (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                        <button onClick={() => handleManualChange(-1)} style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid #ccc', background: 'white', cursor: 'pointer' }}>-</button>
-                        <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{stickers} / {target}</span>
-                        <button onClick={() => handleManualChange(1)} style={{ width: '30px', height: '30px', borderRadius: '50%', border: 'none', background: '#fab005', color: 'white', cursor: 'pointer' }}>+</button>
-                    </div>
-                ) : (
-                    <p>현재 스티커: <strong>{stickers}</strong> / {target}</p>
-                )}
-
-                {isCompleted && (
-                    <div className="coupon-alert">
-                        🎉 축하합니다! <strong>{goal}</strong> 획득!
-                    </div>
-                )}
-            </div>
-            <style>{`
-                .sticker-grid {
-                    display: grid;
-                    gap: 5px;
-                    margin: 10px 0;
-                }
-                .sticker-slot {
-                    aspect-ratio: 1;
-                    background: rgba(255,255,255,0.5);
-                    border-radius: 50%;
-                    border: 1px dashed #fab005;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 0.7rem;
-                    color: #fab005;
-                }
-                .sticker-slot.filled {
-                    background: white;
-                    border: 2px solid #fab005;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                    font-size: 1rem;
-                    color: inherit;
-                }
-                .coupon-alert {
-                    background: #ff6b6b;
-                    color: white;
-                    padding: 5px 10px;
-                    border-radius: 12px;
-                    font-size: 0.9rem;
-                    margin-top: 5px;
-                    animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                }
-                @keyframes pop {
-                    0% { transform: scale(0); }
-                    100% { transform: scale(1); }
-                }
-            `}</style>
+            {/* Completion Message */}
+            {isCompleted && (
+                <div className="completion-banner">
+                    <h4>🎉 목표 달성! 축하해요! 🎉</h4>
+                    <p>{reward_goal}을(를) 선물로 받으세요!</p>
+                </div>
+            )}
         </div>
     );
 };

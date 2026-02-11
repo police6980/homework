@@ -13,6 +13,41 @@ import './App.css';
 // Register Korean locale for datepicker
 registerLocale('ko', ko);
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    this.setState({ error, errorInfo });
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', color: 'red' }}>
+          <h1>⚠️ Something went wrong.</h1>
+          <details style={{ whiteSpace: 'pre-wrap' }}>
+            {this.state.error && this.state.error.toString()}
+            <br />
+            {this.state.errorInfo && this.state.errorInfo.componentStack}
+          </details>
+          <button onClick={() => window.location.reload()}>Reload</button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -24,6 +59,9 @@ function App() {
     const saved = localStorage.getItem('darkMode');
     return saved === 'true';
   });
+
+  // Mobile Tab State
+  const [mobileTab, setMobileTab] = useState('tasks'); // 'tasks' | 'stickers'
 
   useEffect(() => {
     if (darkMode) {
@@ -74,8 +112,7 @@ function App() {
     </button>
   ));
 
-  // Mobile Tab State
-  const [mobileTab, setMobileTab] = useState('tasks'); // 'tasks' | 'stickers'
+
 
   return (
     <div className="app-layout">
@@ -83,7 +120,10 @@ function App() {
         <div className="header-content container">
           <div className="brand">
             <div className="logo-icon">📚</div>
-            <h1>박규리 숙제 관리</h1>
+            <div>
+              <h1>박규리 숙제 관리</h1>
+              <small style={{ fontSize: '0.7rem', color: '#ccc' }}>v1.4 (Debug Mode)</small>
+            </div>
             <div className={`user-badge ${user.role}`}>
               {user.role === 'daughter' ? '👧 규리' : '👩 엄마'}
             </div>

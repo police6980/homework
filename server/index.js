@@ -106,6 +106,9 @@ app.post('/api/stickers/:username', (req, res) => {
         return res.status(400).json({ error: 'Invalid delta value' });
     }
 
+    // Optional: Prevent setting stickers to negative (db layer handles max(0), but extra check here is good)
+    // Actually, simple-db handles Math.max(0, ...), so we just pass the delta.
+
     db.updateUserStickers(req.params.username, deltaNum);
     res.json({ message: 'success' });
 });
