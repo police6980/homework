@@ -1,0 +1,3 @@
+run = "npm start"
+entrypoint = "server/index.js"
+modules = ["nodejs-18"]
